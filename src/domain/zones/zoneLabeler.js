@@ -1,12 +1,8 @@
-/**
- * Asigna un nombre humano a una zona (zoneId) usando clusters del mock.
- * Estrategia MVP: centro de geohash -> cluster más cercano.
- */
+// src/domain/zones/zoneLabeler.js
 export function createZoneLabeler({ clusters, zoneEngine }) {
   const safeClusters = Array.isArray(clusters) ? clusters : [];
 
   function dist2(aLat, aLng, bLat, bLng) {
-    // Aproximación suficiente para distancias cortas en ciudad
     const dLat = aLat - bLat;
     const dLng = aLng - bLng;
     return dLat * dLat + dLng * dLng;
@@ -30,7 +26,6 @@ export function createZoneLabeler({ clusters, zoneEngine }) {
       }
     }
 
-    // Si no hay clusters, fallback “humano”
     return best?.zone_name ?? `Zona ${zoneId.slice(0, 5)}`;
   }
 
