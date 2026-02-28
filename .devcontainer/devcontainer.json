@@ -1,0 +1,28 @@
+{
+    "name": "React MVP (Node 20)",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "workspaceFolder": "/workspaces/app",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/app,type=bind,consistency=cached",
+    "forwardPorts": [
+        5173
+    ],
+    "portsAttributes": {
+        "5173": {
+            "label": "Vite Dev Server",
+            "onAutoForward": "openBrowser"
+        }
+    },
+    "mounts": [
+        "source=IA_hack_node_modules,target=/workspaces/app/node_modules,type=volume"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    }
+}
