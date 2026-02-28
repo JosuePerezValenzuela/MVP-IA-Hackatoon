@@ -9,32 +9,71 @@ app.use(cors({ origin: true }));
 app.use(express.json({ limit: "2mb" }));
 
 const GITHUB_PAT = process.env.GITHUB_MODELS_PAT;
-const MODEL = process.env.GITHUB_MODELS_MODEL;
+const MODEL = process.env.GITHUB_MODELS_MODEL || "openai/gpt-4.1";
+
+// Cache global (vive mientras el server esté levantado)
+const cache = new Map(); // key -> { markdown, ts }
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutos
 
 if (!GITHUB_PAT) {
   console.error("Falta GITHUB_MODELS_PAT en .env.local");
   process.exit(1);
 }
 
-// Endpoint local: recibe resumen semanal y devuelve markdown
 app.post("/api/report", async (req, res) => {
   try {
     const { weekLabel, payload } = req.body;
 
-    // Prompt: ejecutivo, corto, con bullets, y recomendaciones
+    // Validación mínima
+    if (!weekLabel || typeof weekLabel !== "string") {
+      return res.status(400).json({ error: "Falta weekLabel (string)." });
+    }
+    if (!payload || typeof payload !== "object") {
+      return res.status(400).json({ error: "Falta payload (object)." });
+    }
+
+    // Compactar payload (ahorro de tokens)
+    const compact = {
+      context: payload.context ?? payload.meta ?? {},
+      totals: payload.totals ?? {},
+      hotspots: Array.isArray(payload.hotspots)
+        ? payload.hotspots.slice(0, 10)
+        : [],
+      // opcional: clusters si los necesitas para que el modelo use nombres humanos
+      clusters: Array.isArray(payload.clusters) ? payload.clusters : undefined,
+    };
+
+    // Cache key estable
+    const key = JSON.stringify({ weekLabel, compact });
+
+    // Cache hit
+    const cached = cache.get(key);
+    if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+      return res.json({
+        markdown: cached.markdown,
+        model: MODEL,
+        cached: true,
+      });
+    }
+
+    // Prompt ejecutivo, sin inventar
     const system = `
-    Eres un analista ambiental y de salud pública.
-    Genera un REPORTE EJECUTIVO semanal en Markdown, claro y minimalista.
-    Incluye: Resumen, Hallazgos clave, Zonas críticas, Recomendaciones accionables (medibles),
-    y Riesgos/limitaciones del dato (MVP).
-    No inventes datos fuera del JSON.
+Eres un analista ambiental y de salud pública.
+Genera un REPORTE EJECUTIVO semanal en Markdown, claro, minimalista y orientado a toma de decisiones.
+Incluye SIEMPRE:
+1) Resumen ejecutivo (3-5 bullets)
+2) Hallazgos clave (bullets)
+3) Zonas críticas (tabla corta con: zona, nivel, eventos)
+4) Recomendaciones accionables y medibles (bullets)
+5) Riesgos/limitaciones del dato (MVP)
+No inventes datos fuera del JSON. Si falta información, dilo explícitamente.
 `.trim();
 
     const user = `
 Semana: ${weekLabel}
 
-Datos (JSON):
-${JSON.stringify(payload, null, 2)}
+Datos (JSON compacto):
+${JSON.stringify(compact, null, 2)}
 `.trim();
 
     const ghRes = await fetch(
@@ -68,7 +107,10 @@ ${JSON.stringify(payload, null, 2)}
     const data = await ghRes.json();
     const markdown = data?.choices?.[0]?.message?.content ?? "";
 
-    return res.json({ markdown, model: MODEL });
+    // Guardar en cache
+    cache.set(key, { markdown, ts: Date.now() });
+
+    return res.json({ markdown, model: MODEL, cached: false });
   } catch (err) {
     return res.status(500).json({ error: String(err) });
   }
