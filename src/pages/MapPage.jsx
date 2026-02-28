@@ -1,21 +1,40 @@
 import { useEffect, useMemo, useState } from "react";
-import { Container, Stack, Typography, Box, FormControl, InputLabel, Select, MenuItem, Chip } from "@mui/material";
+import {
+  Container,
+  Stack,
+  Typography,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+} from "@mui/material";
 
 import TopNav from "../ui/TopNav";
 import MapView from "../components/MapView";
+import WeekKpis from "../components/WeekKpis";
 
 import { loadMockEvents } from "../services/loadMockEvents";
 import { createGeohashHexEngine } from "../domain/zones/geohashHexEngine";
-import { aggregateToxicCountsByWeekAndZone, toZoneSummaries } from "../domain/aggregate";
+import {
+  aggregateToxicCountsByWeekAndZone,
+  toZoneSummaries,
+} from "../domain/aggregate";
 
 export default function MapPage() {
-  const zoneEngine = useMemo(() => createGeohashHexEngine({ precision: 6 }), []);
+  const zoneEngine = useMemo(
+    () => createGeohashHexEngine({ precision: 6 }),
+    [],
+  );
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState("");
 
   useEffect(() => {
-    loadMockEvents().then(setEvents).catch((e) => setError(e.message));
+    loadMockEvents()
+      .then(setEvents)
+      .catch((e) => setError(e.message));
   }, []);
 
   const agg = useMemo(() => {
@@ -23,7 +42,10 @@ export default function MapPage() {
     return aggregateToxicCountsByWeekAndZone(events, zoneEngine);
   }, [events, zoneEngine]);
 
-  const weeks = useMemo(() => (agg ? Array.from(agg.keys()).sort() : []), [agg]);
+  const weeks = useMemo(
+    () => (agg ? Array.from(agg.keys()).sort() : []),
+    [agg],
+  );
   const activeWeek = selectedWeek || (weeks.length ? weeks[0] : "");
 
   const zonesForSelectedWeek = useMemo(() => {
@@ -74,10 +96,15 @@ export default function MapPage() {
                 </Select>
               </FormControl>
 
-              <Chip label={`Zonas: ${zonesForSelectedWeek.length}`} color="primary" variant="outlined" />
+              <Chip
+                label={`Zonas: ${zonesForSelectedWeek.length}`}
+                color="primary"
+                variant="outlined"
+              />
             </Stack>
           </Stack>
 
+          <WeekKpis zones={zonesForSelectedWeek} />
           <MapView zones={zonesForSelectedWeek} zoneEngine={zoneEngine} />
         </Stack>
       </Container>
