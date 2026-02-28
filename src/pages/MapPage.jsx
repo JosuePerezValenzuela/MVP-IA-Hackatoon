@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { Container, Stack, Typography, Box, FormControl, InputLabel, Select, MenuItem, Chip } from "@mui/material";
+
+import TopNav from "../ui/TopNav";
+import MapView from "../components/MapView";
+
 import { loadMockEvents } from "../services/loadMockEvents";
 import { createGeohashHexEngine } from "../domain/zones/geohashHexEngine";
 import { aggregateToxicCountsByWeekAndZone, toZoneSummaries } from "../domain/aggregate";
-import MapView from "../components/MapView";
-import TopNav from "../ui/TopNav";
 
 export default function MapPage() {
   const zoneEngine = useMemo(() => createGeohashHexEngine({ precision: 6 }), []);
@@ -12,9 +15,7 @@ export default function MapPage() {
   const [selectedWeek, setSelectedWeek] = useState("");
 
   useEffect(() => {
-    loadMockEvents()
-      .then(setEvents)
-      .catch((e) => setError(e.message));
+    loadMockEvents().then(setEvents).catch((e) => setError(e.message));
   }, []);
 
   const agg = useMemo(() => {
@@ -33,32 +34,53 @@ export default function MapPage() {
   }, [agg, activeWeek]);
 
   if (error) return <pre>Error: {error}</pre>;
-  if (!agg) return <div style={{ padding: 16 }}>Cargando mock…</div>;
+  if (!agg) return <Box sx={{ p: 3 }}>Cargando mock…</Box>;
 
   return (
-    <div style={{ padding: 16, fontFamily: "system-ui" }}>
+    <>
       <TopNav />
 
-      <h2>Mapa de alertas (harmful=true)</h2>
+      <Container maxWidth="lg" sx={{ py: 3 }}>
+        <Stack spacing={2}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            alignItems={{ sm: "center" }}
+            justifyContent="space-between"
+          >
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 800 }}>
+                Mapa de alertas
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Eventos tóxicos por zona — semana calendario (lunes a domingo)
+              </Typography>
+            </Box>
 
-      <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
-        <label>Semana:</label>
-        <select
-          value={activeWeek}
-          onChange={(e) => setSelectedWeek(e.target.value)}
-          disabled={!weeks.length}
-        >
-          {weeks.map((w) => (
-            <option key={w} value={w}>
-              {w}
-            </option>
-          ))}
-        </select>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <FormControl size="small" sx={{ minWidth: 260 }}>
+                <InputLabel>Semana</InputLabel>
+                <Select
+                  label="Semana"
+                  value={activeWeek}
+                  onChange={(e) => setSelectedWeek(e.target.value)}
+                  disabled={!weeks.length}
+                >
+                  {weeks.map((w) => (
+                    <MenuItem key={w} value={w}>
+                      {w}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-        <div style={{ opacity: 0.8 }}>Zonas con alerta: {zonesForSelectedWeek.length}</div>
-      </div>
+              <Chip label={`Zonas: ${zonesForSelectedWeek.length}`} color="primary" variant="outlined" />
+            </Stack>
+          </Stack>
 
-      <MapView zones={zonesForSelectedWeek} zoneEngine={zoneEngine} />
-    </div>
+          <MapView zones={zonesForSelectedWeek} zoneEngine={zoneEngine} />
+        </Stack>
+      </Container>
+    </>
   );
 }
