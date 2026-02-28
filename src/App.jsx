@@ -2,11 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { loadMockEvents } from "./services/loadMockEvents";
 import { createGeohashHexEngine } from "./domain/zones/geohashHexEngine";
 import { aggregateToxicCountsByWeekAndZone, toZoneSummaries } from "./domain/aggregate";
+import MapView from "./components/MapView";
 
 export default function App() {
   const zoneEngine = useMemo(() => createGeohashHexEngine({ precision: 6 }), []);
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
+
+  // Solo guardamos selección del usuario (puede empezar vacío)
+  const [selectedWeek, setSelectedWeek] = useState("");
 
   useEffect(() => {
     loadMockEvents()
@@ -19,37 +23,44 @@ export default function App() {
     return aggregateToxicCountsByWeekAndZone(events, zoneEngine);
   }, [events, zoneEngine]);
 
-  if (error) return <pre>Error: {error}</pre>;
-  if (!agg) return <div>Cargando mock…</div>;
+  const weeks = useMemo(() => (agg ? Array.from(agg.keys()).sort() : []), [agg]);
 
-  const weeks = Array.from(agg.keys()).sort();
+  // Semana “activa” derivada: si el usuario no eligió, usamos la primera disponible
+  const activeWeek = selectedWeek || (weeks.length ? weeks[0] : "");
+
+  const zonesForSelectedWeek = useMemo(() => {
+    if (!agg || !activeWeek) return [];
+    const weekMap = agg.get(activeWeek);
+    if (!weekMap) return [];
+    return toZoneSummaries(activeWeek, weekMap);
+  }, [agg, activeWeek]);
+
+  if (error) return <pre>Error: {error}</pre>;
+  if (!agg) return <div style={{ padding: 16 }}>Cargando mock…</div>;
 
   return (
     <div style={{ padding: 16, fontFamily: "system-ui" }}>
-      <h2>MVP — Resumen por semana (harmful=true)</h2>
-      <p>Motor de zonas: {zoneEngine.name} (precision {zoneEngine.precision})</p>
+      <h2>MVP — Mapa de alertas (harmful=true)</h2>
 
-      {weeks.map((weekKey) => {
-        const weekMap = agg.get(weekKey);
-        const rows = toZoneSummaries(weekKey, weekMap);
+      <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
+        <label>Semana:</label>
 
-        return (
-          <div key={weekKey} style={{ marginTop: 16 }}>
-            <h3>Semana: {weekKey}</h3>
-            {rows.length === 0 ? (
-              <div>(Sin zonas con toxicidad — no se pinta nada)</div>
-            ) : (
-              <ul>
-                {rows.map((r) => (
-                  <li key={r.zoneId}>
-                    {r.level} — zoneId: <code>{r.zoneId}</code> — eventos: {r.count}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        );
-      })}
+        <select
+          value={activeWeek}
+          onChange={(e) => setSelectedWeek(e.target.value)}
+          disabled={!weeks.length}
+        >
+          {weeks.map((w) => (
+            <option key={w} value={w}>
+              {w}
+            </option>
+          ))}
+        </select>
+
+        <div style={{ opacity: 0.8 }}>Zonas con alerta: {zonesForSelectedWeek.length}</div>
+      </div>
+
+      <MapView zones={zonesForSelectedWeek} zoneEngine={zoneEngine} />
     </div>
   );
 }
