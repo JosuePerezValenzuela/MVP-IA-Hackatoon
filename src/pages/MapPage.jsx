@@ -11,7 +11,9 @@ import {
   Chip,
   ToggleButton,
   ToggleButtonGroup,
+  Button
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import TopNav from "../ui/TopNav";
 import MapView from "../components/MapView";
@@ -37,6 +39,7 @@ function formatWeekLabel(weekKey) {
 }
 
 export default function MapPage() {
+  const navigate = useNavigate();
   // Granularidad (geohash precision) internamente 5/6/7
   const [precision, setPrecision] = useState(6);
 
@@ -221,6 +224,17 @@ export default function MapPage() {
                     color="primary"
                     variant="outlined"
                   />
+
+                  <Button
+                    variant="contained"
+                    onClick={() =>
+                      navigate(
+                        `/reports?week=${encodeURIComponent(activeWeek)}&precision=${precision}&autogen=1`,
+                      )
+                    }
+                  >
+                    Generar reporte
+                  </Button>
                 </Box>
               </Box>
             </Stack>

@@ -6,7 +6,7 @@
     "workspaceFolder": "/workspaces/app",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/app,type=bind,consistency=cached",
     "forwardPorts": [
-        5173
+        5173, 8787
     ],
     "portsAttributes": {
         "5173": {
