@@ -23,7 +23,12 @@ function FitBounds({ polygons }) {
 
   useEffect(() => {
     if (!bounds) return;
-    map.fitBounds(bounds, { padding: [20, 20] });
+
+    // En layouts flex, Leaflet a veces necesita recalcular tamaño
+    setTimeout(() => {
+      map.invalidateSize();
+      map.fitBounds(bounds, { padding: [20, 20] });
+    }, 0);
   }, [bounds, map]);
 
   return null;
@@ -32,7 +37,15 @@ function FitBounds({ polygons }) {
 function Legend() {
   const Item = ({ label, fill, stroke }) => (
     <Stack direction="row" spacing={1} alignItems="center">
-      <Box sx={{ width: 14, height: 14, borderRadius: 1, background: fill, border: `2px solid ${stroke}` }} />
+      <Box
+        sx={{
+          width: 14,
+          height: 14,
+          borderRadius: 1,
+          background: fill,
+          border: `2px solid ${stroke}`,
+        }}
+      />
       <Typography variant="body2">{label}</Typography>
     </Stack>
   );
@@ -53,13 +66,20 @@ function Legend() {
         bgcolor: "background.paper",
       }}
     >
-      <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: "primary.main" }}>
+      <Typography
+        variant="subtitle2"
+        sx={{ fontWeight: 700, mb: 1, color: "primary.main" }}
+      >
         Leyenda
       </Typography>
 
       <Stack spacing={0.75}>
         <Item label="Verde (1 evento)" fill={COLORS.VERDE.fill} stroke={COLORS.VERDE.stroke} />
-        <Item label="Amarillo (2–3 eventos)" fill={COLORS.AMARILLO.fill} stroke={COLORS.AMARILLO.stroke} />
+        <Item
+          label="Amarillo (2–3 eventos)"
+          fill={COLORS.AMARILLO.fill}
+          stroke={COLORS.AMARILLO.stroke}
+        />
         <Item label="Rojo (≥4 eventos)" fill={COLORS.ROJO.fill} stroke={COLORS.ROJO.stroke} />
       </Stack>
 
@@ -79,11 +99,21 @@ export default function MapView({ zones, zoneEngine }) {
   );
 
   return (
-    <Paper elevation={0} sx={{ border: "1px solid", borderColor: "divider", borderRadius: 3, overflow: "hidden" }}>
-      <Box sx={{ height: "75vh", width: "100%", position: "relative" }}>
+    <Paper
+      elevation={0}
+      sx={{
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 3,
+        overflow: "hidden",
+        height: "100%",          // ✅ clave: ahora sí existe el 100%
+        display: "flex",         // ✅ clave
+        flexDirection: "column", // ✅ clave
+      }}
+    >
+      <Box sx={{ flex: 1, minHeight: 0, width: "100%", position: "relative" }}>
         <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
           <TileLayer
-            // Mapa base oscuro (CARTO)
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           />
@@ -101,7 +131,7 @@ export default function MapView({ zones, zoneEngine }) {
                 pathOptions={{
                   color: palette.stroke,
                   fillColor: palette.fill,
-                  fillOpacity: 0.22, // pastel sobre mapa oscuro
+                  fillOpacity: 0.22,
                   weight: 2,
                 }}
               >
