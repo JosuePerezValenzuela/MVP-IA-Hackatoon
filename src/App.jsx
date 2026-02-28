@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useMemo, useState } from "react";
+import { loadMockEvents } from "./services/loadMockEvents";
+import { createGeohashHexEngine } from "./domain/zones/geohashHexEngine";
+import { aggregateToxicCountsByWeekAndZone, toZoneSummaries } from "./domain/aggregate";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const zoneEngine = useMemo(() => createGeohashHexEngine({ precision: 6 }), []);
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadMockEvents()
+      .then(setEvents)
+      .catch((e) => setError(e.message));
+  }, []);
+
+  const agg = useMemo(() => {
+    if (!events.length) return null;
+    return aggregateToxicCountsByWeekAndZone(events, zoneEngine);
+  }, [events, zoneEngine]);
+
+  if (error) return <pre>Error: {error}</pre>;
+  if (!agg) return <div>Cargando mock…</div>;
+
+  const weeks = Array.from(agg.keys()).sort();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ padding: 16, fontFamily: "system-ui" }}>
+      <h2>MVP — Resumen por semana (harmful=true)</h2>
+      <p>Motor de zonas: {zoneEngine.name} (precision {zoneEngine.precision})</p>
 
-export default App
+      {weeks.map((weekKey) => {
+        const weekMap = agg.get(weekKey);
+        const rows = toZoneSummaries(weekKey, weekMap);
+
+        return (
+          <div key={weekKey} style={{ marginTop: 16 }}>
+            <h3>Semana: {weekKey}</h3>
+            {rows.length === 0 ? (
+              <div>(Sin zonas con toxicidad — no se pinta nada)</div>
+            ) : (
+              <ul>
+                {rows.map((r) => (
+                  <li key={r.zoneId}>
+                    {r.level} — zoneId: <code>{r.zoneId}</code> — eventos: {r.count}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
