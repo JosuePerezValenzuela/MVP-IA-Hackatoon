@@ -97,8 +97,10 @@ export default function MapPage() {
         }}
       >
         <Container
-          maxWidth="lg"
+          maxWidth="xl"
+          disableGutters
           sx={{
+            px: { xs: 2, sm: 3, md: 4 }, // padding controlado (no margen gigante)
             py: 2,
             flex: 1,
             display: "flex",
@@ -127,7 +129,6 @@ export default function MapPage() {
                   display: "flex",
                   flexDirection: "column",
                   gap: 1.25,
-                  px: 1.25,
                   py: 1,
                   border: "1px solid",
                   borderColor: "divider",
