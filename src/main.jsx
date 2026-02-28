@@ -15,14 +15,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <CssBaseline />
       <GlobalStyles
         styles={{
-          /* Contenedor Leaflet */
-          ".leaflet-container": {
-            background: "#0b1220",
-            outline: "none",
-            fontFamily:
-              "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial",
-          },
-
           /* Barra de zoom y controles */
           ".leaflet-bar": {
             border: "1px solid rgba(34,197,94,0.25)",
@@ -51,41 +43,26 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             outline: "none",
           },
 
-          /* Atribución (abajo a la derecha) */
-          ".leaflet-control-attribution": {
-            background: "rgba(15,23,42,0.85)",
-            color: "#9ca3af",
-            border: "1px solid rgba(34,197,94,0.18)",
-            borderRadius: 10,
-            padding: "4px 8px",
-            margin: "0 10px 10px 0",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
-            backdropFilter: "blur(6px)",
-          },
-          ".leaflet-control-attribution a": {
-            color: "#86efac",
-            textDecoration: "none",
-          },
-          ".leaflet-control-attribution a:hover": {
-            color: "#22c55e",
-            textDecoration: "underline",
-          },
-
-          /* Tooltips (si quieres que se vean más dark) */
-          ".leaflet-tooltip": {
-            background: "rgba(15,23,42,0.95)",
-            color: "#e5e7eb",
-            border: "1px solid rgba(34,197,94,0.20)",
-            borderRadius: 10,
-            boxShadow: "0 12px 30px rgba(0,0,0,0.45)",
-          },
-          ".leaflet-tooltip-top:before, .leaflet-tooltip-bottom:before, .leaflet-tooltip-left:before, .leaflet-tooltip-right:before":
+          /* Atribución: forzar dark (alto nivel de especificidad + !important) */
+          ".leaflet-container .leaflet-control-attribution, .leaflet-container .leaflet-control-attribution.leaflet-control":
             {
-              borderTopColor: "rgba(15,23,42,0.95)",
-              borderBottomColor: "rgba(15,23,42,0.95)",
-              borderLeftColor: "rgba(15,23,42,0.95)",
-              borderRightColor: "rgba(15,23,42,0.95)",
+              background: "rgba(15,23,42,0.88) !important",
+              color: "#9ca3af !important",
+              border: "1px solid rgba(34,197,94,0.18) !important",
+              borderRadius: "999px !important",
+              padding: "6px 10px !important",
+              margin: "0 12px 12px 0 !important",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.35) !important",
+              backdropFilter: "blur(6px)",
             },
+          ".leaflet-container .leaflet-control-attribution a": {
+            color: "#86efac !important",
+            textDecoration: "none !important",
+          },
+          ".leaflet-container .leaflet-control-attribution a:hover": {
+            color: "#22c55e !important",
+            textDecoration: "underline !important",
+          },
         }}
       />
       <RouterProvider router={router} />
