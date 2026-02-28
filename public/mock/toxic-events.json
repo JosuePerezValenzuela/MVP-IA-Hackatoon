@@ -1,0 +1,722 @@
+{
+  "meta": {
+    "city": "Cochabamba - Cercado",
+    "timestamp_format": "YYYY-MM-DDTHH:mm:ss (hora local, sin offset)",
+    "calendar_weeks": [
+      {
+        "week_id": "W1",
+        "from": "2026-02-09",
+        "to": "2026-02-15",
+        "week_rule": "Lunes a Domingo"
+      },
+      {
+        "week_id": "W2",
+        "from": "2026-02-16",
+        "to": "2026-02-22",
+        "week_rule": "Lunes a Domingo"
+      }
+    ],
+    "alert_rule_per_zone_per_week": {
+      "VERDE": 1,
+      "AMARILLO": "2-3",
+      "ROJO": ">=4",
+      "render_rule": "Si una zona tiene 0 eventos harmful=true en la semana, NO se pinta en el mapa."
+    },
+    "notes": [
+      "cluster_id es solo para depuración del mock; en producción la zona se derivará automáticamente (geohash/H3).",
+      "events incluye harmful=false para probar filtrado."
+    ]
+  },
+  "clusters": [
+    {
+      "cluster_id": "C1",
+      "zone_name": "Cercado - Centro (Plaza 14 de Septiembre)",
+      "center": { "lat": -17.3935, "lng": -66.1568 },
+      "expected_alert": {
+        "W1_2026-02-09_2026-02-15": "ROJO",
+        "W2_2026-02-16_2026-02-22": "ROJO"
+      }
+    },
+    {
+      "cluster_id": "C2",
+      "zone_name": "Cercado - Norte (Recoleta / Queru Queru)",
+      "center": { "lat": -17.3785, "lng": -66.1635 },
+      "expected_alert": {
+        "W1_2026-02-09_2026-02-15": "AMARILLO",
+        "W2_2026-02-16_2026-02-22": "VERDE"
+      }
+    },
+    {
+      "cluster_id": "C3",
+      "zone_name": "Cercado - Este (Laguna Alalay / Av. Blanco Galindo)",
+      "center": { "lat": -17.4015, "lng": -66.145 },
+      "expected_alert": {
+        "W1_2026-02-09_2026-02-15": "VERDE",
+        "W2_2026-02-16_2026-02-22": "AMARILLO"
+      }
+    },
+    {
+      "cluster_id": "C4",
+      "zone_name": "Cercado - Oeste (Sarco) [SIN ALERTA: solo lecturas no dañinas]",
+      "center": { "lat": -17.392, "lng": -66.178 },
+      "expected_alert": {
+        "W1_2026-02-09_2026-02-15": "SIN_ALERTA",
+        "W2_2026-02-16_2026-02-22": "SIN_ALERTA"
+      }
+    },
+    {
+      "cluster_id": "C5",
+      "zone_name": "Cercado - Sur (Valle Hermoso / Av. Petrolera)",
+      "center": { "lat": -17.4115, "lng": -66.155 },
+      "expected_alert": {
+        "W1_2026-02-09_2026-02-15": "AMARILLO",
+        "W2_2026-02-16_2026-02-22": "ROJO"
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "evt-0006",
+      "timestamp": "2026-02-09T08:30:00",
+      "lat": -17.393838,
+      "lng": -66.157175,
+      "harmful": true,
+      "truck_id": "TRK-03",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0014",
+      "timestamp": "2026-02-09T09:45:15",
+      "lat": -17.378015,
+      "lng": -66.164431,
+      "harmful": false,
+      "truck_id": "TRK-01",
+      "cluster_id": "C2"
+    },
+    {
+      "id": "evt-0001",
+      "timestamp": "2026-02-09T10:40:00",
+      "lat": -17.393478,
+      "lng": -66.156135,
+      "harmful": true,
+      "truck_id": "TRK-06",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0013",
+      "timestamp": "2026-02-09T10:45:30",
+      "lat": -17.401805,
+      "lng": -66.144222,
+      "harmful": false,
+      "truck_id": "TRK-01",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0008",
+      "timestamp": "2026-02-09T11:05:45",
+      "lat": -17.401123,
+      "lng": -66.145587,
+      "harmful": true,
+      "truck_id": "TRK-01",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0007",
+      "timestamp": "2026-02-09T12:15:15",
+      "lat": -17.410564,
+      "lng": -66.155892,
+      "harmful": true,
+      "truck_id": "TRK-05",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0020",
+      "timestamp": "2026-02-09T13:20:45",
+      "lat": -17.392564,
+      "lng": -66.177515,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0018",
+      "timestamp": "2026-02-09T14:55:30",
+      "lat": -17.392505,
+      "lng": -66.177403,
+      "harmful": false,
+      "truck_id": "TRK-04",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0011",
+      "timestamp": "2026-02-09T15:30:15",
+      "lat": -17.379611,
+      "lng": -66.16337,
+      "harmful": true,
+      "truck_id": "TRK-05",
+      "cluster_id": "C2"
+    },
+    {
+      "id": "evt-0024",
+      "timestamp": "2026-02-09T16:25:30",
+      "lat": -17.411213,
+      "lng": -66.155457,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0016",
+      "timestamp": "2026-02-09T17:35:45",
+      "lat": -17.392962,
+      "lng": -66.178438,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C4"
+    },
+
+    {
+      "id": "evt-0004",
+      "timestamp": "2026-02-10T06:05:00",
+      "lat": -17.394131,
+      "lng": -66.156774,
+      "harmful": true,
+      "truck_id": "TRK-02",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0022",
+      "timestamp": "2026-02-10T07:10:15",
+      "lat": -17.411286,
+      "lng": -66.154067,
+      "harmful": false,
+      "truck_id": "TRK-02",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0017",
+      "timestamp": "2026-02-10T07:50:30",
+      "lat": -17.391233,
+      "lng": -66.178569,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0009",
+      "timestamp": "2026-02-10T08:30:00",
+      "lat": -17.379537,
+      "lng": -66.164597,
+      "harmful": true,
+      "truck_id": "TRK-04",
+      "cluster_id": "C2"
+    },
+    {
+      "id": "evt-0021",
+      "timestamp": "2026-02-10T09:55:45",
+      "lat": -17.39263,
+      "lng": -66.177386,
+      "harmful": false,
+      "truck_id": "TRK-01",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0027",
+      "timestamp": "2026-02-10T10:10:15",
+      "lat": -17.411032,
+      "lng": -66.154396,
+      "harmful": false,
+      "truck_id": "TRK-04",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0002",
+      "timestamp": "2026-02-10T10:40:30",
+      "lat": -17.392508,
+      "lng": -66.157811,
+      "harmful": true,
+      "truck_id": "TRK-04",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0015",
+      "timestamp": "2026-02-10T12:05:00",
+      "lat": -17.402403,
+      "lng": -66.145263,
+      "harmful": false,
+      "truck_id": "TRK-02",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0023",
+      "timestamp": "2026-02-10T18:35:45",
+      "lat": -17.410894,
+      "lng": -66.155804,
+      "harmful": false,
+      "truck_id": "TRK-05",
+      "cluster_id": "C5"
+    },
+
+    {
+      "id": "evt-0010",
+      "timestamp": "2026-02-11T06:25:15",
+      "lat": -17.379226,
+      "lng": -66.163023,
+      "harmful": true,
+      "truck_id": "TRK-03",
+      "cluster_id": "C2"
+    },
+    {
+      "id": "evt-0005",
+      "timestamp": "2026-02-11T07:15:30",
+      "lat": -17.393199,
+      "lng": -66.155837,
+      "harmful": true,
+      "truck_id": "TRK-01",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0012",
+      "timestamp": "2026-02-11T07:40:15",
+      "lat": -17.401646,
+      "lng": -66.145989,
+      "harmful": false,
+      "truck_id": "TRK-05",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0019",
+      "timestamp": "2026-02-11T11:10:45",
+      "lat": -17.392543,
+      "lng": -66.178266,
+      "harmful": false,
+      "truck_id": "TRK-05",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0025",
+      "timestamp": "2026-02-11T12:25:30",
+      "lat": -17.410587,
+      "lng": -66.155707,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C5"
+    },
+
+    {
+      "id": "evt-0003",
+      "timestamp": "2026-02-12T09:05:45",
+      "lat": -17.394094,
+      "lng": -66.157319,
+      "harmful": true,
+      "truck_id": "TRK-03",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0026",
+      "timestamp": "2026-02-12T13:15:00",
+      "lat": -17.411821,
+      "lng": -66.154919,
+      "harmful": false,
+      "truck_id": "TRK-01",
+      "cluster_id": "C5"
+    },
+
+    {
+      "id": "evt-0028",
+      "timestamp": "2026-02-13T06:30:15",
+      "lat": -17.392115,
+      "lng": -66.177148,
+      "harmful": false,
+      "truck_id": "TRK-02",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0029",
+      "timestamp": "2026-02-13T07:55:30",
+      "lat": -17.392044,
+      "lng": -66.178773,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0030",
+      "timestamp": "2026-02-13T08:10:45",
+      "lat": -17.378921,
+      "lng": -66.162562,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C2"
+    },
+    {
+      "id": "evt-0031",
+      "timestamp": "2026-02-13T09:45:00",
+      "lat": -17.401008,
+      "lng": -66.144372,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0032",
+      "timestamp": "2026-02-13T10:55:15",
+      "lat": -17.392683,
+      "lng": -66.157036,
+      "harmful": false,
+      "truck_id": "TRK-04",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0033",
+      "timestamp": "2026-02-13T12:05:30",
+      "lat": -17.410902,
+      "lng": -66.155113,
+      "harmful": false,
+      "truck_id": "TRK-02",
+      "cluster_id": "C5"
+    },
+
+    {
+      "id": "evt-0034",
+      "timestamp": "2026-02-14T06:05:45",
+      "lat": -17.392847,
+      "lng": -66.156249,
+      "harmful": false,
+      "truck_id": "TRK-01",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0035",
+      "timestamp": "2026-02-14T09:20:15",
+      "lat": -17.392248,
+      "lng": -66.177367,
+      "harmful": false,
+      "truck_id": "TRK-05",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0036",
+      "timestamp": "2026-02-14T12:35:30",
+      "lat": -17.402207,
+      "lng": -66.144835,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0037",
+      "timestamp": "2026-02-14T18:50:00",
+      "lat": -17.410612,
+      "lng": -66.15561,
+      "harmful": true,
+      "truck_id": "TRK-06",
+      "cluster_id": "C5"
+    },
+
+    {
+      "id": "evt-0038",
+      "timestamp": "2026-02-15T07:05:15",
+      "lat": -17.392683,
+      "lng": -66.156872,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0039",
+      "timestamp": "2026-02-15T08:40:30",
+      "lat": -17.392325,
+      "lng": -66.178596,
+      "harmful": false,
+      "truck_id": "TRK-02",
+      "cluster_id": "C4"
+    },
+
+    {
+      "id": "evt-0040",
+      "timestamp": "2026-02-16T06:10:15",
+      "lat": -17.39362,
+      "lng": -66.156497,
+      "harmful": true,
+      "truck_id": "TRK-02",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0041",
+      "timestamp": "2026-02-16T06:25:30",
+      "lat": -17.378131,
+      "lng": -66.162621,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C2"
+    },
+    {
+      "id": "evt-0042",
+      "timestamp": "2026-02-16T07:40:15",
+      "lat": -17.392361,
+      "lng": -66.157994,
+      "harmful": false,
+      "truck_id": "TRK-04",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0043",
+      "timestamp": "2026-02-16T08:20:45",
+      "lat": -17.40179,
+      "lng": -66.14598,
+      "harmful": true,
+      "truck_id": "TRK-02",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0044",
+      "timestamp": "2026-02-16T09:55:00",
+      "lat": -17.410856,
+      "lng": -66.155813,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0045",
+      "timestamp": "2026-02-16T11:35:15",
+      "lat": -17.392443,
+      "lng": -66.178371,
+      "harmful": false,
+      "truck_id": "TRK-04",
+      "cluster_id": "C4"
+    },
+
+    {
+      "id": "evt-0046",
+      "timestamp": "2026-02-17T06:05:45",
+      "lat": -17.41093,
+      "lng": -66.155421,
+      "harmful": true,
+      "truck_id": "TRK-05",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0047",
+      "timestamp": "2026-02-17T07:25:15",
+      "lat": -17.39287,
+      "lng": -66.157132,
+      "harmful": true,
+      "truck_id": "TRK-05",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0048",
+      "timestamp": "2026-02-17T08:10:30",
+      "lat": -17.378928,
+      "lng": -66.164246,
+      "harmful": true,
+      "truck_id": "TRK-06",
+      "cluster_id": "C2"
+    },
+    {
+      "id": "evt-0049",
+      "timestamp": "2026-02-17T09:45:00",
+      "lat": -17.392505,
+      "lng": -66.177118,
+      "harmful": false,
+      "truck_id": "TRK-01",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0050",
+      "timestamp": "2026-02-17T12:05:15",
+      "lat": -17.401026,
+      "lng": -66.145112,
+      "harmful": false,
+      "truck_id": "TRK-02",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0051",
+      "timestamp": "2026-02-17T14:20:45",
+      "lat": -17.393008,
+      "lng": -66.15594,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0052",
+      "timestamp": "2026-02-17T18:55:30",
+      "lat": -17.41069,
+      "lng": -66.154658,
+      "harmful": false,
+      "truck_id": "TRK-01",
+      "cluster_id": "C5"
+    },
+
+    {
+      "id": "evt-0053",
+      "timestamp": "2026-02-18T06:15:45",
+      "lat": -17.392233,
+      "lng": -66.156274,
+      "harmful": true,
+      "truck_id": "TRK-04",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0054",
+      "timestamp": "2026-02-18T07:35:15",
+      "lat": -17.401486,
+      "lng": -66.144392,
+      "harmful": true,
+      "truck_id": "TRK-04",
+      "cluster_id": "C3"
+    },
+    {
+      "id": "evt-0055",
+      "timestamp": "2026-02-18T08:05:30",
+      "lat": -17.39293,
+      "lng": -66.178691,
+      "harmful": false,
+      "truck_id": "TRK-02",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0056",
+      "timestamp": "2026-02-18T10:10:00",
+      "lat": -17.410788,
+      "lng": -66.155932,
+      "harmful": true,
+      "truck_id": "TRK-04",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0057",
+      "timestamp": "2026-02-18T12:45:15",
+      "lat": -17.378242,
+      "lng": -66.163915,
+      "harmful": false,
+      "truck_id": "TRK-05",
+      "cluster_id": "C2"
+    },
+
+    {
+      "id": "evt-0058",
+      "timestamp": "2026-02-19T06:55:00",
+      "lat": -17.393706,
+      "lng": -66.157126,
+      "harmful": true,
+      "truck_id": "TRK-01",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0059",
+      "timestamp": "2026-02-19T08:20:45",
+      "lat": -17.39219,
+      "lng": -66.177486,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0060",
+      "timestamp": "2026-02-19T11:25:30",
+      "lat": -17.410994,
+      "lng": -66.155204,
+      "harmful": true,
+      "truck_id": "TRK-06",
+      "cluster_id": "C5"
+    },
+
+    {
+      "id": "evt-0061",
+      "timestamp": "2026-02-20T06:35:15",
+      "lat": -17.392813,
+      "lng": -66.156927,
+      "harmful": true,
+      "truck_id": "TRK-03",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0062",
+      "timestamp": "2026-02-20T07:35:45",
+      "lat": -17.37887,
+      "lng": -66.162913,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C2"
+    },
+    {
+      "id": "evt-0063",
+      "timestamp": "2026-02-20T13:15:30",
+      "lat": -17.40121,
+      "lng": -66.144509,
+      "harmful": false,
+      "truck_id": "TRK-02",
+      "cluster_id": "C3"
+    },
+
+    {
+      "id": "evt-0064",
+      "timestamp": "2026-02-21T06:20:15",
+      "lat": -17.393244,
+      "lng": -66.156418,
+      "harmful": false,
+      "truck_id": "TRK-01",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0065",
+      "timestamp": "2026-02-21T10:40:30",
+      "lat": -17.410622,
+      "lng": -66.155117,
+      "harmful": true,
+      "truck_id": "TRK-01",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0066",
+      "timestamp": "2026-02-21T14:05:15",
+      "lat": -17.39245,
+      "lng": -66.17794,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C4"
+    },
+
+    {
+      "id": "evt-0067",
+      "timestamp": "2026-02-22T06:55:00",
+      "lat": -17.392997,
+      "lng": -66.157137,
+      "harmful": false,
+      "truck_id": "TRK-04",
+      "cluster_id": "C1"
+    },
+    {
+      "id": "evt-0068",
+      "timestamp": "2026-02-22T09:15:30",
+      "lat": -17.410886,
+      "lng": -66.154606,
+      "harmful": true,
+      "truck_id": "TRK-04",
+      "cluster_id": "C5"
+    },
+    {
+      "id": "evt-0069",
+      "timestamp": "2026-02-22T12:30:45",
+      "lat": -17.39231,
+      "lng": -66.176313,
+      "harmful": false,
+      "truck_id": "TRK-06",
+      "cluster_id": "C4"
+    },
+    {
+      "id": "evt-0070",
+      "timestamp": "2026-02-22T15:55:15",
+      "lat": -17.401827,
+      "lng": -66.145227,
+      "harmful": false,
+      "truck_id": "TRK-03",
+      "cluster_id": "C3"
+    }
+  ]
+}
